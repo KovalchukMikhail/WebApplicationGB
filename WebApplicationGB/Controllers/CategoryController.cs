@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WebApplicationGB.Dto;
 using WebApplicationGB.Model;
+using WebApplicationGB.Repo;
 
 namespace WebApplicationGB.Controllers
 {
@@ -7,57 +9,25 @@ namespace WebApplicationGB.Controllers
     [Route("[controller]")]
     public class CategoryController : ControllerBase
     {
-        [HttpGet("getCategory")]
-        public IActionResult GetCategory()
+        private readonly IProductRepository _productRepository;
+        public CategoryController(IProductRepository productRepository)
         {
-            try
-            {
-                using (ProductContext context = new ProductContext())
-                {
-                    var categorys = context.Products.Select(p => new Category()
-                    {
-                        Id = p.Id,
-                        Name = p.Name,
-                        Description = p.Description
-                    }).ToList();
-                    return Ok(categorys);
-                }
-            }
-            catch
-            {
-                return StatusCode(500);
-            }
+            _productRepository = productRepository;
+        }
+        [HttpGet("get_categories")]
+        public IActionResult GetCategories()
+        {
+            var categories = _productRepository.GetCategories();
+            return Ok(categories);
         }
 
-        [HttpPost("postCategory")]
-        public IActionResult PostCategory([FromQuery] string name, string description)
+        [HttpPost("add_category")]
+        public IActionResult PostCategory([FromBody] CategoryDto categoryDto)
         {
-            try
-            {
-                using (ProductContext context = new ProductContext())
-                {
-                    if (!context.Categories.Any(x => x.Name.ToLower() == name.ToLower()))
-                    {
-                        context.Add(new Category
-                        {
-                            Name = name,
-                            Description = description,
-                        });
-                        context.SaveChanges();
-                        return Ok();
-                    }
-                    else
-                    {
-                        return StatusCode(400);
-                    }
-                }
-            }
-            catch
-            {
-                return StatusCode(500);
-            }
+            var result = _productRepository.AddCategory(categoryDto);
+            return Ok(result);
         }
-        [HttpDelete("deleteCategory")]
+        [HttpDelete("delete_category")]
         public IActionResult DeleteCategory(int categoryId)
         {
             try

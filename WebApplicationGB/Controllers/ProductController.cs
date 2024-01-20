@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WebApplicationGB.Dto;
 using WebApplicationGB.Model;
+using WebApplicationGB.Repo;
 
 namespace WebApplicationGB.Controllers
 {
@@ -7,59 +9,25 @@ namespace WebApplicationGB.Controllers
     [Route("[controller]")]
     public class ProductController : ControllerBase
     {
-        [HttpGet("getProduct")]
-        public IActionResult GetProduct()
+        private readonly IProductRepository _productRepository;
+        public ProductController(IProductRepository productRepository)
         {
-            try
-            {
-                using(ProductContext context = new ProductContext())
-                {
-                    var products = context.Products.Select(p => new Product()
-                    {
-                        Id = p.Id,
-                        Name = p.Name,
-                        Description = p.Description
-                    }).ToList();
-                    return Ok(products);
-                }
-            }
-            catch
-            {
-                return StatusCode(500);
-            }
+            _productRepository = productRepository;
+        }
+        [HttpGet("get_products")]
+        public IActionResult GetProducts()
+        {
+            var products = _productRepository.GetProducts();
+            return Ok(products);
         }
 
-        [HttpPost("postProduct")]
-        public IActionResult PostProduct([FromQuery] string name, string description, int categoryId, int cost)
+        [HttpPost("add_product")]
+        public IActionResult AddProduct([FromBody] ProductDto productDto)
         {
-            try
-            {
-                using (ProductContext context = new ProductContext())
-                {
-                    if(!context.Products.Any(x => x.Name.ToLower() == name.ToLower()))
-                    {
-                        context.Add(new Product
-                        {
-                            Name = name,
-                            Description = description,
-                            Cost = cost,
-                            CategoryID = categoryId
-                        });
-                        context.SaveChanges();
-                        return Ok();
-                    }
-                    else
-                    {
-                        return StatusCode(400);
-                    }
-                }
-            }
-            catch
-            {
-                return StatusCode(500);
-            }
+            var result = _productRepository.AddProduct(productDto);
+            return Ok(result);
         }
-        [HttpDelete("deleteProduct")]
+        [HttpDelete("delete_product")]
         public IActionResult DeleteProduct(int productId)
         {
             try
