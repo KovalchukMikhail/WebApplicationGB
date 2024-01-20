@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebApplicationGB.Dto;
+using WebApplicationGB.Infrastructure;
 using WebApplicationGB.Model;
 using WebApplicationGB.Repo;
 
@@ -51,6 +52,13 @@ namespace WebApplicationGB.Controllers
             {
                 return StatusCode(500);
             }
+        }
+        [HttpGet(template: "get_categories_csv")]
+        public FileContentResult GetCategoriesCsv()
+        {
+            var categories = _productRepository.GetCategories();
+            string content = Csv.GetCategoryCsv(categories);
+            return File(new System.Text.UTF8Encoding().GetBytes(content), "text/csv", "report.csv");
         }
     }
 }

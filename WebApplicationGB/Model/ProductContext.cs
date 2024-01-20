@@ -10,11 +10,11 @@ namespace WebApplicationGB.Model
 
         public ProductContext() { }
         public ProductContext(DbContextOptions<ProductContext> options) : base(options) { }
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer(@"Server=.;DataBase=WebStore;Integrated Security=False;TrustServerCertificate=true;Trusted_Connection=True;")
-                .UseLazyLoadingProxies();
-        }
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    optionsBuilder.UseSqlServer(@"Server=.;DataBase=WebStore;Integrated Security=False;TrustServerCertificate=true;Trusted_Connection=True;")
+        //        .UseLazyLoadingProxies();
+        //}
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
