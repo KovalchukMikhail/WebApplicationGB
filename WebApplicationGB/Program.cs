@@ -44,7 +44,7 @@ namespace WebApplicationGB
                 app.UseSwaggerUI();
             }
 
-            string staticFilesPath = Path.Combine(Directory.GetCurrentDirectory(), "StaticFiles");
+            string staticFilesPath = System.IO.Path.Combine(Directory.GetCurrentDirectory(), "StaticFiles");
             Directory.CreateDirectory(staticFilesPath);
 
             app.UseStaticFiles(new StaticFileOptions
